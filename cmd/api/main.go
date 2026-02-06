@@ -17,8 +17,10 @@ import (
 )
 
 func main() {
+
 	// Загружаем конфигурацию
 	cfg := config.Load()
+
 
 	// Подключаемся к PostgreSQL
 	db, err := database.Connect(cfg.DSN())
@@ -27,15 +29,19 @@ func main() {
 	}
 	defer db.Close()
 
+
 	// Применяем миграции
 	if err := database.RunMigrations(db, "migrations"); err != nil {
 		log.Fatal("Ошибка миграций: ", err)
 	}
 
+
 	// Создаём директорию для аватарок
 	os.MkdirAll("web/uploads", 0755)
 
+
 	// === Инициализация слоёв (DI через конструкторы) ===
+
 
 	// Репозитории
 	userRepo := repository.NewUserRepo(db)
@@ -45,6 +51,7 @@ func main() {
 	likeRepo := repository.NewLikeRepo(db)
 	tokenRepo := repository.NewTokenRepo(db)
 
+
 	// Сервисы
 	authService := service.NewAuthService(userRepo, tokenRepo, cfg.JWTSecret)
 	userService := service.NewUserService(userRepo)
@@ -53,15 +60,18 @@ func main() {
 	followService := service.NewFollowService(followRepo)
 	likeService := service.NewLikeService(likeRepo)
 
+
 	// Хендлер + роутер
 	h := handler.NewHandler(authService, userService, postService, commentService, followService, likeService)
 	router := h.Routes()
+
 
 	// HTTP-сервер
 	srv := &http.Server{
 		Addr:    ":" + cfg.ServerPort,
 		Handler: router,
 	}
+
 
 	// Запуск в горутине
 	go func() {
@@ -70,6 +80,7 @@ func main() {
 			log.Fatal(err)
 		}
 	}()
+
 
 	// Graceful shutdown
 	quit := make(chan os.Signal, 1)
