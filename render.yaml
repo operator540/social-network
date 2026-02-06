@@ -2,7 +2,7 @@ databases:
   - name: social-network-db
     plan: free
     databaseName: social_network
-    user: postgres
+    user: socialnet
 
 services:
   - type: web
