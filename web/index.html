@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GoNetwork</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0d1117;
+            color: #c9d1d9;
+            min-height: 100vh;
+        }
+
+        a { color: #58a6ff; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+
+        /* Навигация */
+        .navbar {
+            background: #161b22;
+            border-bottom: 1px solid #30363d;
+            padding: 12px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .navbar .logo {
+            font-size: 20px;
+            font-weight: 700;
+            color: #58a6ff;
+            cursor: pointer;
+        }
+
+        .navbar .nav-links {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+        }
+
+        .navbar .nav-links span {
+            color: #8b949e;
+            cursor: pointer;
+        }
+        .navbar .nav-links span:hover { color: #c9d1d9; }
+
+        /* Контейнер */
+        .container {
+            max-width: 640px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Карточки */
+        .card {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+
+        /* Формы */
+        .form-group {
+            margin-bottom: 12px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 4px;
+            color: #8b949e;
+            font-size: 14px;
+        }
+
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 10px 12px;
+            background: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            color: #c9d1d9;
+            font-size: 14px;
+        }
+
+        .form-group input:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: #58a6ff;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+            font-family: inherit;
+        }
+
+        /* Кнопки */
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: background 0.2s;
+        }
+
+        .btn-primary {
+            background: #238636;
+            color: #fff;
+        }
+        .btn-primary:hover { background: #2ea043; }
+
+        .btn-danger {
+            background: #da3633;
+            color: #fff;
+        }
+        .btn-danger:hover { background: #f85149; }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid #30363d;
+            color: #c9d1d9;
+        }
+        .btn-outline:hover { border-color: #8b949e; }
+
+        .btn-like {
+            background: transparent;
+            border: none;
+            color: #8b949e;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .btn-like.liked { color: #f85149; }
+
+        /* Пост */
+        .post-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .post-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #30363d;
+            object-fit: cover;
+        }
+
+        .post-username {
+            font-weight: 600;
+            color: #58a6ff;
+            cursor: pointer;
+        }
+
+        .post-time {
+            color: #484f58;
+            font-size: 12px;
+        }
+
+        .post-content {
+            margin-bottom: 12px;
+            line-height: 1.5;
+            white-space: pre-wrap;
+        }
+
+        .post-actions {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+            padding-top: 10px;
+            border-top: 1px solid #21262d;
+        }
+
+        /* Комментарий */
+        .comment {
+            padding: 8px 0;
+            border-bottom: 1px solid #21262d;
+        }
+
+        .comment:last-child { border-bottom: none; }
+
+        .comment-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 4px;
+        }
+
+        .comment-avatar {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #30363d;
+            object-fit: cover;
+        }
+
+        /* Профиль */
+        .profile-header {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .profile-avatar {
+            width: 96px;
+            height: 96px;
+            border-radius: 50%;
+            background: #30363d;
+            object-fit: cover;
+            margin-bottom: 12px;
+        }
+
+        .profile-stats {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            margin: 12px 0;
+        }
+
+        .profile-stats div {
+            text-align: center;
+        }
+
+        .profile-stats .count {
+            font-weight: 700;
+            font-size: 18px;
+        }
+
+        .profile-stats .label {
+            font-size: 12px;
+            color: #8b949e;
+        }
+
+        /* Табы */
+        .tabs {
+            display: flex;
+            gap: 0;
+            border-bottom: 1px solid #30363d;
+            margin-bottom: 16px;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            color: #8b949e;
+            border-bottom: 2px solid transparent;
+        }
+
+        .tab.active {
+            color: #c9d1d9;
+            border-bottom-color: #f78166;
+        }
+
+        /* Сообщения */
+        .message {
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 12px;
+            font-size: 14px;
+        }
+
+        .message-error { background: #3d1214; border: 1px solid #da3633; color: #f85149; }
+        .message-success { background: #0d2818; border: 1px solid #238636; color: #3fb950; }
+
+        /* Пользователь в списке */
+        .user-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 0;
+            border-bottom: 1px solid #21262d;
+            cursor: pointer;
+        }
+
+        .user-item:hover { background: #1c2128; }
+
+        .hidden { display: none; }
+
+        /* Спиннер */
+        .spinner {
+            text-align: center;
+            padding: 40px;
+            color: #484f58;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Навигация -->
+<nav class="navbar">
+    <span class="logo" onclick="showFeed()">GoNetwork</span>
+    <div class="nav-links" id="navLinks"></div>
+</nav>
+
+<!-- Основной контент -->
+<div class="container" id="app"></div>
+
+<script>
+    const API = '/v1';
+    let accessToken = localStorage.getItem('access_token') || '';
+    let refreshToken = localStorage.getItem('refresh_token') || '';
+    let currentUser = JSON.parse(localStorage.getItem('current_user') || 'null');
+
+    // === HTTP-клиент ===
+
+    async function api(method, path, body = null) {
+        const opts = {
+            method,
+            headers: { 'Content-Type': 'application/json' },
+        };
+        if (accessToken) opts.headers['Authorization'] = 'Bearer ' + accessToken;
+        if (body) opts.body = JSON.stringify(body);
+
+        let resp = await fetch(API + path, opts);
+
+        // Если 401 — пробуем обновить токен
+        if (resp.status === 401 && refreshToken) {
+            const refreshResp = await fetch(API + '/auth/refresh', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ refresh_token: refreshToken }),
+            });
+            if (refreshResp.ok) {
+                const tokens = await refreshResp.json();
+                setTokens(tokens.access_token, tokens.refresh_token);
+                opts.headers['Authorization'] = 'Bearer ' + accessToken;
+                resp = await fetch(API + path, opts);
+            } else {
+                logout();
+                return null;
+            }
+        }
+
+        return resp;
+    }
+
+    async function apiUpload(path, formData) {
+        const opts = {
+            method: 'POST',
+            headers: {},
+        };
+        if (accessToken) opts.headers['Authorization'] = 'Bearer ' + accessToken;
+        opts.body = formData;
+        return fetch(API + path, opts);
+    }
+
+    function setTokens(access, refresh) {
+        accessToken = access;
+        refreshToken = refresh;
+        localStorage.setItem('access_token', access);
+        localStorage.setItem('refresh_token', refresh);
+    }
+
+    function setUser(user) {
+        currentUser = user;
+        localStorage.setItem('current_user', JSON.stringify(user));
+    }
+
+    // === Навигация ===
+
+    function updateNav() {
+        const nav = document.getElementById('navLinks');
+        if (currentUser) {
+            nav.innerHTML = `
+                <span onclick="showFeed()">Лента</span>
+                <span onclick="showFollowingFeed()">Подписки</span>
+                <span onclick="showProfile(${currentUser.id})">${currentUser.username}</span>
+                <span onclick="logout()">Выйти</span>
+            `;
+        } else {
+            nav.innerHTML = `
+                <span onclick="showLogin()">Войти</span>
+                <span onclick="showRegister()">Регистрация</span>
+            `;
+        }
+    }
+
+    // === Страницы ===
+
+    function showLogin() {
+        const app = document.getElementById('app');
+        app.innerHTML = `
+            <div class="card">
+                <h2 style="margin-bottom:16px">Вход</h2>
+                <div id="msg"></div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="loginEmail" placeholder="email@example.com">
+                </div>
+                <div class="form-group">
+                    <label>Пароль</label>
+                    <input type="password" id="loginPassword" placeholder="Ваш пароль">
+                </div>
+                <button class="btn btn-primary" onclick="doLogin()">Войти</button>
+                <p style="margin-top:12px;font-size:14px">Нет аккаунта? <a href="#" onclick="showRegister();return false">Регистрация</a></p>
+            </div>
+        `;
+    }
+
+    function showRegister() {
+        const app = document.getElementById('app');
+        app.innerHTML = `
+            <div class="card">
+                <h2 style="margin-bottom:16px">Регистрация</h2>
+                <div id="msg"></div>
+                <div class="form-group">
+                    <label>Имя пользователя</label>
+                    <input type="text" id="regUsername" placeholder="username">
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="regEmail" placeholder="email@example.com">
+                </div>
+                <div class="form-group">
+                    <label>Пароль</label>
+                    <input type="password" id="regPassword" placeholder="Минимум 6 символов">
+                </div>
+                <button class="btn btn-primary" onclick="doRegister()">Зарегистрироваться</button>
+                <p style="margin-top:12px;font-size:14px">Уже есть аккаунт? <a href="#" onclick="showLogin();return false">Войти</a></p>
+            </div>
+        `;
+    }
+
+    async function showFeed() {
+        const app = document.getElementById('app');
+        app.innerHTML = '<div class="spinner">Загрузка...</div>';
+
+        const resp = await api('GET', '/feed');
+        const posts = await resp.json();
+
+        let html = '';
+        if (currentUser) {
+            html += `
+                <div class="card">
+                    <div class="form-group">
+                        <textarea id="newPost" placeholder="Что нового?"></textarea>
+                    </div>
+                    <button class="btn btn-primary" onclick="doCreatePost()">Опубликовать</button>
+                </div>
+            `;
+        }
+
+        html += renderPosts(posts);
+        app.innerHTML = html;
+    }
+
+    async function showFollowingFeed() {
+        if (!currentUser) { showLogin(); return; }
+
+        const app = document.getElementById('app');
+        app.innerHTML = '<div class="spinner">Загрузка...</div>';
+
+        const resp = await api('GET', '/feed/following');
+        const posts = await resp.json();
+
+        app.innerHTML = '<h2 style="margin-bottom:16px">Лента подписок</h2>' + renderPosts(posts);
+    }
+
+    async function showProfile(userId) {
+        const app = document.getElementById('app');
+        app.innerHTML = '<div class="spinner">Загрузка...</div>';
+
+        const resp = await api('GET', '/users/' + userId);
+        if (!resp || !resp.ok) {
+            app.innerHTML = '<div class="card">Пользователь не найден</div>';
+            return;
+        }
+        const profile = await resp.json();
+
+        const isMe = currentUser && currentUser.id === profile.id;
+        const avatarSrc = profile.avatar_url || '';
+
+        let html = `
+            <div class="card profile-header">
+                ${avatarSrc ? `<img class="profile-avatar" src="${avatarSrc}">` : '<div class="profile-avatar"></div>'}
+                <h2>${profile.username}</h2>
+                <p style="color:#8b949e;margin:6px 0">${profile.bio || ''}</p>
+                <div class="profile-stats">
+                    <div onclick="showFollowers(${profile.id})" style="cursor:pointer">
+                        <div class="count">${profile.followers_count}</div>
+                        <div class="label">Подписчики</div>
+                    </div>
+                    <div onclick="showFollowingList(${profile.id})" style="cursor:pointer">
+                        <div class="count">${profile.following_count}</div>
+                        <div class="label">Подписки</div>
+                    </div>
+                </div>
+        `;
+
+        if (isMe) {
+            html += `
+                <div style="margin-top:12px">
+                    <button class="btn btn-outline" onclick="showEditProfile()">Редактировать</button>
+                    <label class="btn btn-outline" style="margin-left:8px;cursor:pointer">
+                        Аватар <input type="file" accept="image/*" style="display:none" onchange="doUploadAvatar(this)">
+                    </label>
+                </div>
+            `;
+        } else if (currentUser) {
+            if (profile.is_following) {
+                html += `<button class="btn btn-danger" style="margin-top:12px" onclick="doUnfollow(${profile.id})">Отписаться</button>`;
+            } else {
+                html += `<button class="btn btn-primary" style="margin-top:12px" onclick="doFollow(${profile.id})">Подписаться</button>`;
+            }
+        }
+
+        html += '</div>';
+        app.innerHTML = html;
+    }
+
+    function showEditProfile() {
+        const app = document.getElementById('app');
+        app.innerHTML = `
+            <div class="card">
+                <h2 style="margin-bottom:16px">Редактировать профиль</h2>
+                <div id="msg"></div>
+                <div class="form-group">
+                    <label>О себе</label>
+                    <textarea id="editBio">${currentUser.bio || ''}</textarea>
+                </div>
+                <button class="btn btn-primary" onclick="doUpdateBio()">Сохранить</button>
+                <button class="btn btn-outline" style="margin-left:8px" onclick="showProfile(${currentUser.id})">Отмена</button>
+            </div>
+        `;
+    }
+
+    async function showFollowers(userId) {
+        const app = document.getElementById('app');
+        app.innerHTML = '<div class="spinner">Загрузка...</div>';
+
+        const resp = await api('GET', '/users/' + userId + '/followers');
+        const users = await resp.json();
+
+        app.innerHTML = '<h2 style="margin-bottom:16px">Подписчики</h2><div class="card">' +
+            renderUserList(users) + '</div>';
+    }
+
+    async function showFollowingList(userId) {
+        const app = document.getElementById('app');
+        app.innerHTML = '<div class="spinner">Загрузка...</div>';
+
+        const resp = await api('GET', '/users/' + userId + '/following');
+        const users = await resp.json();
+
+        app.innerHTML = '<h2 style="margin-bottom:16px">Подписки</h2><div class="card">' +
+            renderUserList(users) + '</div>';
+    }
+
+    async function showComments(postId) {
+        const app = document.getElementById('app');
+        app.innerHTML = '<div class="spinner">Загрузка...</div>';
+
+        const resp = await api('GET', '/posts/' + postId + '/comments');
+        const comments = await resp.json();
+
+        let html = `<div style="margin-bottom:16px"><a href="#" onclick="showFeed();return false">&larr; Назад</a></div>`;
+
+        if (currentUser) {
+            html += `
+                <div class="card">
+                    <div class="form-group">
+                        <textarea id="newComment" placeholder="Ваш комментарий..."></textarea>
+                    </div>
+                    <button class="btn btn-primary" onclick="doCreateComment(${postId})">Комментировать</button>
+                </div>
+            `;
+        }
+
+        html += '<div class="card">';
+        if (comments.length === 0) {
+            html += '<p style="color:#484f58;text-align:center;padding:20px">Комментариев пока нет</p>';
+        } else {
+            comments.forEach(c => {
+                html += `
+                    <div class="comment">
+                        <div class="comment-header">
+                            ${c.avatar_url ? `<img class="comment-avatar" src="${c.avatar_url}">` : '<div class="comment-avatar"></div>'}
+                            <span class="post-username" onclick="showProfile(${c.user_id})">${c.username}</span>
+                            <span class="post-time">${timeAgo(c.created_at)}</span>
+                        </div>
+                        <p style="font-size:14px">${escapeHtml(c.content)}</p>
+                    </div>
+                `;
+            });
+        }
+        html += '</div>';
+        app.innerHTML = html;
+    }
+
+    // === Рендеринг ===
+
+    function renderPosts(posts) {
+        if (!posts || posts.length === 0) {
+            return '<div class="card" style="text-align:center;color:#484f58;padding:40px">Постов пока нет</div>';
+        }
+
+        return posts.map(p => {
+            const isOwner = currentUser && currentUser.id === p.user_id;
+            return `
+                <div class="card">
+                    <div class="post-header">
+                        ${p.avatar_url ? `<img class="post-avatar" src="${p.avatar_url}">` : '<div class="post-avatar"></div>'}
+                        <div>
+                            <span class="post-username" onclick="showProfile(${p.user_id})">${p.username}</span>
+                            <div class="post-time">${timeAgo(p.created_at)}</div>
+                        </div>
+                        ${isOwner ? `<span style="margin-left:auto;color:#484f58;cursor:pointer" onclick="doDeletePost(${p.id})" title="Удалить">&#10005;</span>` : ''}
+                    </div>
+                    <div class="post-content">${escapeHtml(p.content)}</div>
+                    <div class="post-actions">
+                        <button class="btn-like ${p.is_liked ? 'liked' : ''}" onclick="doToggleLike(${p.id}, ${p.is_liked})">
+                            ${p.is_liked ? '&#9829;' : '&#9825;'} ${p.likes_count}
+                        </button>
+                        <button class="btn-like" onclick="showComments(${p.id})">&#128172; Комментарии</button>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    function renderUserList(users) {
+        if (!users || users.length === 0) {
+            return '<p style="color:#484f58;text-align:center;padding:20px">Пусто</p>';
+        }
+        return users.map(u => `
+            <div class="user-item" onclick="showProfile(${u.id})">
+                ${u.avatar_url ? `<img class="post-avatar" src="${u.avatar_url}">` : '<div class="post-avatar"></div>'}
+                <div>
+                    <div style="font-weight:600">${u.username}</div>
+                    <div style="font-size:12px;color:#8b949e">${u.bio || ''}</div>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    // === Действия ===
+
+    async function doRegister() {
+        const username = document.getElementById('regUsername').value.trim();
+        const email = document.getElementById('regEmail').value.trim();
+        const password = document.getElementById('regPassword').value;
+
+        const resp = await fetch(API + '/auth/register', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, email, password }),
+        });
+
+        const data = await resp.json();
+        if (!resp.ok) {
+            showMsg(data.error || 'Ошибка регистрации', 'error');
+            return;
+        }
+
+        setTokens(data.tokens.access_token, data.tokens.refresh_token);
+        setUser(data.user);
+        updateNav();
+        showFeed();
+    }
+
+    async function doLogin() {
+        const email = document.getElementById('loginEmail').value.trim();
+        const password = document.getElementById('loginPassword').value;
+
+        const resp = await fetch(API + '/auth/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password }),
+        });
+
+        const data = await resp.json();
+        if (!resp.ok) {
+            showMsg(data.error || 'Ошибка входа', 'error');
+            return;
+        }
+
+        setTokens(data.tokens.access_token, data.tokens.refresh_token);
+        setUser(data.user);
+        updateNav();
+        showFeed();
+    }
+
+    async function logout() {
+        if (refreshToken) {
+            await api('POST', '/auth/logout', { refresh_token: refreshToken });
+        }
+        accessToken = '';
+        refreshToken = '';
+        currentUser = null;
+        localStorage.clear();
+        updateNav();
+        showFeed();
+    }
+
+    async function doCreatePost() {
+        const content = document.getElementById('newPost').value.trim();
+        if (!content) return;
+
+        const resp = await api('POST', '/posts', { content });
+        if (resp && resp.ok) showFeed();
+    }
+
+    async function doDeletePost(postId) {
+        if (!confirm('Удалить пост?')) return;
+        const resp = await api('DELETE', '/posts/' + postId);
+        if (resp && resp.ok) showFeed();
+    }
+
+    async function doToggleLike(postId, isLiked) {
+        if (!currentUser) { showLogin(); return; }
+        if (isLiked) {
+            await api('DELETE', '/posts/' + postId + '/like');
+        } else {
+            await api('POST', '/posts/' + postId + '/like');
+        }
+        showFeed();
+    }
+
+    async function doCreateComment(postId) {
+        const content = document.getElementById('newComment').value.trim();
+        if (!content) return;
+
+        const resp = await api('POST', '/posts/' + postId + '/comments', { content });
+        if (resp && resp.ok) showComments(postId);
+    }
+
+    async function doFollow(userId) {
+        await api('POST', '/users/' + userId + '/follow');
+        showProfile(userId);
+    }
+
+    async function doUnfollow(userId) {
+        await api('DELETE', '/users/' + userId + '/follow');
+        showProfile(userId);
+    }
+
+    async function doUpdateBio() {
+        const bio = document.getElementById('editBio').value;
+        const resp = await api('PUT', '/users/me', { bio });
+        if (resp && resp.ok) {
+            const user = await resp.json();
+            setUser(user);
+            showProfile(currentUser.id);
+        }
+    }
+
+    async function doUploadAvatar(input) {
+        if (!input.files[0]) return;
+        const formData = new FormData();
+        formData.append('avatar', input.files[0]);
+
+        const resp = await apiUpload('/users/me/avatar', formData);
+        if (resp && resp.ok) {
+            // Обновляем данные текущего пользователя
+            const meResp = await api('GET', '/users/me');
+            if (meResp && meResp.ok) {
+                const user = await meResp.json();
+                setUser(user);
+            }
+            showProfile(currentUser.id);
+        }
+    }
+
+    // === Утилиты ===
+
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    function timeAgo(dateStr) {
+        const date = new Date(dateStr);
+        const now = new Date();
+        const seconds = Math.floor((now - date) / 1000);
+
+        if (seconds < 60) return 'только что';
+        if (seconds < 3600) return Math.floor(seconds / 60) + ' мин. назад';
+        if (seconds < 86400) return Math.floor(seconds / 3600) + ' ч. назад';
+        return Math.floor(seconds / 86400) + ' дн. назад';
+    }
+
+    function showMsg(text, type) {
+        const el = document.getElementById('msg');
+        if (el) {
+            el.innerHTML = `<div class="message message-${type}">${escapeHtml(text)}</div>`;
+        }
+    }
+
+    // === Инициализация ===
+    updateNav();
+    showFeed();
+</script>
+</body>
+</html>

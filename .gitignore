@@ -1,0 +1,10 @@
+.env
+/social-network
+/api
+web/uploads/*
+!web/uploads/.gitkeep
+*.exe
+*.test
+*.out
+tmp/
+vendor/
