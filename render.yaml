@@ -1,0 +1,40 @@
+databases:
+  - name: social-network-db
+    plan: free
+    databaseName: social_network
+    user: postgres
+
+services:
+  - type: web
+    name: social-network
+    plan: free
+    runtime: go
+    buildCommand: go build -o social-network ./cmd/api
+    startCommand: ./social-network
+    envVars:
+      - key: DB_HOST
+        fromDatabase:
+          name: social-network-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: social-network-db
+          property: port
+      - key: DB_USER
+        fromDatabase:
+          name: social-network-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: social-network-db
+          property: password
+      - key: DB_NAME
+        fromDatabase:
+          name: social-network-db
+          property: database
+      - key: DB_SSLMODE
+        value: require
+      - key: JWT_SECRET
+        generateValue: true
+      - key: SERVER_PORT
+        value: "8080"
