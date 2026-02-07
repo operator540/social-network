@@ -66,6 +66,7 @@ func (h *Handler) Routes() http.Handler {
 			r.Group(func(r chi.Router) {
 				r.Use(h.OptionalAuthMiddleware)
 				r.Get("/{id}", h.getUser)
+				r.Get("/{id}/posts", h.getUserPosts)
 			})
 
 			// Защищённые по ID

@@ -23,8 +23,8 @@ func NewPostService(postRepo repository.PostRepository) *PostService {
 }
 
 // Create создаёт новый пост
-func (s *PostService) Create(userID int, content string) (*model.Post, error) {
-	return s.postRepo.Create(userID, content)
+func (s *PostService) Create(userID int, content, imageURL string) (*model.Post, error) {
+	return s.postRepo.Create(userID, content, imageURL)
 }
 
 // GetByID возвращает пост по ID
@@ -58,4 +58,12 @@ func (s *PostService) GetFollowingFeed(userID, limit, offset int) ([]*model.Post
 		limit = 50
 	}
 	return s.postRepo.GetFollowingFeed(userID, limit, offset)
+}
+
+// GetByUserID возвращает посты конкретного пользователя
+func (s *PostService) GetByUserID(userID, currentUserID, limit, offset int) ([]*model.Post, error) {
+	if limit <= 0 || limit > 50 {
+		limit = 50
+	}
+	return s.postRepo.GetByUserID(userID, currentUserID, limit, offset)
 }

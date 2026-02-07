@@ -15,11 +15,12 @@ type UserRepository interface {
 
 // PostRepository — интерфейс работы с постами
 type PostRepository interface {
-	Create(userID int, content string) (*model.Post, error)
+	Create(userID int, content, imageURL string) (*model.Post, error)
 	GetByID(id, currentUserID int) (*model.Post, error)
 	Delete(id int) error
 	GetFeed(currentUserID, limit, offset int) ([]*model.Post, error)
 	GetFollowingFeed(userID, limit, offset int) ([]*model.Post, error)
+	GetByUserID(userID, currentUserID, limit, offset int) ([]*model.Post, error)
 }
 
 // CommentRepository — интерфейс работы с комментариями

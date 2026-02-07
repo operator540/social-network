@@ -9,6 +9,7 @@ type Post struct {
 	Username   string    `json:"username"`    // JOIN с users
 	AvatarURL  string    `json:"avatar_url"`  // JOIN с users
 	Content    string    `json:"content"`
+	ImageURL   string    `json:"image_url"`   // Изображение поста
 	LikesCount int       `json:"likes_count"` // Подсчёт лайков
 	IsLiked    bool      `json:"is_liked"`    // Лайкнул ли текущий пользователь
 	CreatedAt  time.Time `json:"created_at"`
